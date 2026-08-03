@@ -1,0 +1,12 @@
+[user]
+	name = ahetru
+	email = axel.a.hetru@gmail.com
+
+[alias]
+	last = log -1 HEAD
+	lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+
+[core]
+  editor = nvim
+[init]
+	defaultBranch = main
