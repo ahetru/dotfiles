@@ -63,7 +63,7 @@ focus_follows_mouse yes
 mouse_warping output
 default_border pixel 2
 default_floating_border pixel 2
-gaps inner 6
+gaps inner 4
 gaps outer 0
 smart_gaps on
 smart_borders on
@@ -72,7 +72,7 @@ smart_borders on
 # Apparence
 # ------------------------------------------------------------
 # class                 border  bg      text    indicator child_border
-client.focused          #7aa2f7 #1a1b26 #c0caf5 #7aa2f7   #7aa2f7
+client.focused          #e06c75 #1a1b26 #c0caf5 #e06c75   #e06c75
 client.unfocused        #3b4261 #1a1b26 #565f89 #3b4261   #3b4261
 client.focused_inactive #3b4261 #1a1b26 #565f89 #3b4261   #3b4261
 client.urgent           #f7768e #1a1b26 #c0caf5 #f7768e   #f7768e
