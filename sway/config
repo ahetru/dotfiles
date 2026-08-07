@@ -77,6 +77,8 @@ client.unfocused        #3b4261 #1a1b26 #565f89 #3b4261   #3b4261
 client.focused_inactive #3b4261 #1a1b26 #565f89 #3b4261   #3b4261
 client.urgent           #f7768e #1a1b26 #c0caf5 #f7768e   #f7768e
 
+for_window [app_id="Alacritty"] opacity 0.99
+
 # ------------------------------------------------------------
 # Clavier
 # ------------------------------------------------------------
