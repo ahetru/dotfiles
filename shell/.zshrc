@@ -103,6 +103,9 @@ source $ZSH/oh-my-zsh.sh
 # For a full list of active aliases, run `alias`.
 #
 # Example aliases
+# autojump
+source /usr/share/autojump/autojump.zsh
+
 alias bat="batcat"
 alias py="python3"
 alias pof="sudo poweroff"
