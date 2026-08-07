@@ -23,21 +23,21 @@ set $output_secondary DP-1
 # Écrans
 # ------------------------------------------------------------
 output * {
-    bg ~/Pictures/backgrounds/background_flowers.svg stretch
+    bg ~/.config/sway/wallpapers/background_flowers.svg stretch
 }
 
 output $output_primary {
     resolution 2560x1440
     position 1920 0
     scale 1
-    bg ~/Pictures/backgrounds/background_flowers.svg stretch
+    bg ~/.config/sway/wallpapers/background_flowers.svg stretch
 }
 
 output $output_secondary {
     resolution 1920x1080
     position 0 0
     scale 1
-    bg ~/Pictures/backgrounds/background_flowers.svg stretch
+    bg ~/.config/sway/wallpapers/background_flowers.svg stretch
 }
 
 # Écran principal par défaut

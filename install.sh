@@ -4,7 +4,7 @@ set -euo pipefail
 DOTFILES="$(cd "$(dirname "$0")" && pwd)"
 
 # apps -> ~/.config/<app>
-CONFIG_APPS=(alacritty nvim sway waybar wofi)
+CONFIG_APPS=(alacritty nvim sway waybar wofi opencode)
 
 # shell files -> $HOME/<name>
 SHELL_FILES=('.zshenv' '.zshrc')
