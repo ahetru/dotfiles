@@ -50,6 +50,7 @@ window#waybar.hidden {
 #network,
 #pulseaudio,
 #bluetooth,
+#battery,
 #tray {
     padding: 0 10px;
     color: #c0caf5;
@@ -107,6 +108,18 @@ window#waybar.hidden {
 #bluetooth.disabled,
 #bluetooth.off {
     color: #565f89;
+}
+
+#battery {
+    color: #9ece6a;
+}
+
+#battery.warning {
+    color: #e0af68;
+}
+
+#battery.critical {
+    color: #f7768e;
 }
 
 #tray {
