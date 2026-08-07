@@ -1,6 +1,6 @@
 ---
 name: git-workflow
-description: Git & GitHub workflow conventions for InnerChess — commit message format, branch management, code review, and when the agent may commit or push
+description: Git & GitHub workflow conventions — commit message format, branch management, code review, and when the agent may commit or push
 license: MIT
 compatibility: opencode
 metadata:

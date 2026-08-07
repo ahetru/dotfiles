@@ -1,6 +1,6 @@
 ---
 name: react-frontend
-description: React frontend architecture guidelines — feature-based structure, chess.js + react-chessboard UX-only role split, TanStack Query + Zustand state, and licensing rules (MIT/BSD only, no GPL)
+description: React frontend architecture guidelines — feature-based structure, state management, component design, API access, and testing best practices
 license: MIT
 compatibility: opencode
 metadata:
@@ -10,121 +10,97 @@ metadata:
 
 # React Frontend Architecture Guidelines
 
-## Context
+## Philosophy
 
-- This skill is project-agnostic: it applies to any chess training app with a
-  Spring Boot (or equivalent) backend and a React + Vite + TypeScript
-  frontend.
-- The **backend engine is the authoritative source of truth** for move
-  validation and exercise/puzzle checking.
-- The frontend's chess library (chess.js) is a local UX helper only.
-- Exercises/puzzles are served by the backend API (e.g. fetched from a CSV or
-  a database) and exposed via feature controllers returning DTOs.
-- Long-term intent: these apps may become **commercial products**, so all
-  frontend dependencies must use permissive licenses (MIT, BSD, ISC) — no
-  GPL/AGPL.
+- Components are dumb, hooks are smart — business logic lives in hooks, not in
+  JSX
+- Group by feature/domain, not by file type
+- State has a shape: server state (fetched, cached) ≠ client state (ephemeral,
+  local)
+- The project's AGENTS.md is authoritative for library choices; this skill
+  provides patterns and conventions
 
-## Stack
-
-| Concern | Choice | License | Notes |
-|---|---|---|---|
-| Framework | React + Vite + TS | — | already in place |
-| Routing | React Router | MIT | home, trainer, history/stats screens |
-| Server state | TanStack Query | MIT | fetching/caching exercises, submitting attempts |
-| Client state | Zustand | MIT | current position, move history, exercise status |
-| Chess rules engine (client-side only) | chess.js | BSD-2-Clause | UX-only, never authoritative |
-| Board rendering | react-chessboard (v5) | MIT | avoid `chessground` (GPL-3.0) |
-| Styling | Tailwind CSS | MIT | |
-| UI primitives | shadcn/ui (optional) | MIT | |
-| API validation | Zod | MIT | validate/parse backend DTOs |
-| Testing | Vitest + React Testing Library | MIT | native to Vite |
-
-## Role split: chess.js vs backend engine
-
-- **Backend engine** = single source of truth. It decides whether a submitted
-  move actually solves the exercise.
-- **chess.js (frontend)** = local UX helper only, never authoritative:
-  - filters legal squares for drag/drop and highlighting
-  - detects pawn promotion locally to trigger the promotion dialog
-  - parses FEN received from backend to init the board
-  - generates SAN notation for move-history display
-  - local check/checkmate/stalemate detection for visual cues
-- Any divergence between the two engines has no security/business impact —
-  worst case the frontend visually allows a move that the backend then rejects.
-
-## Board rendering choice
-
-- Use `chess.js` + `react-chessboard` (both MIT/BSD, commercial-safe).
-- **Do not use `chessground`** (Lichess's board lib) — GPL-3.0, would force
-  releasing the frontend source if distributed or sold.
-- Note: react-chessboard's default piece SVGs are CC BY-SA 3.0
-  (Wikimedia/Cburnett) — usable commercially but requires attribution/
-  share-alike; consider a custom or differently-licensed piece set later if
-  that's a concern.
-
-## Folder structure (feature-based, mirrors the backend domain split)
+## Folder structure (feature-based)
 
 ```
 src/
 ├── app/
 │   ├── App.tsx
 │   ├── router.tsx
-│   └── providers.tsx          # QueryClientProvider, etc.
+│   └── providers.tsx
 ├── features/
-│   └── <feature>/             # e.g. exercise, trainer, history
+│   └── <feature>/
 │       ├── api/
 │       │   └── <feature>.api.ts
 │       ├── components/
-│       │   ├── ExerciseBoard.tsx
-│       │   ├── ExerciseControls.tsx
-│       │   └── ExerciseFeedback.tsx
 │       ├── hooks/
-│       │   ├── useExercise.ts       # TanStack Query: fetch an exercise
-│       │   └── useExerciseGame.ts   # chess.js + zustand game logic
-│       ├── store/
-│       │   └── exerciseStore.ts     # position, move history, status
+│       ├── store/          (optional, if feature has local state)
 │       └── types/
-│           └── exercise.types.ts
 ├── components/
-│   ├── ui/                    # shared dumb UI primitives (buttons, modals)
+│   ├── ui/                 (shared presentational primitives)
 │   └── layout/
-│       ├── Header.tsx
-│       └── Layout.tsx
-├── lib/
-│   ├── api/
-│   │   └── client.ts           # base fetch/axios config
-│   └── chess/
-│       └── chessEngine.ts      # thin wrapper around chess.js if needed
+├── lib/                    (cross-cutting utilities, API client, etc.)
 ├── styles/
-│   └── index.css
 └── main.tsx
 ```
 
-Replace `<feature>` and `Exercise*` with the actual domain name (e.g. puzzle,
-trainer, drill).
+Rules:
 
-## Design principles
+- Feature code stays inside its `features/<name>/` folder — never leak into
+  `components/` or `lib/`
+- `components/` and `lib/` are for **shared** code only
+- API calls only through dedicated api modules, no raw HTTP in components or
+  stores
 
-1. **Group by feature/domain, not by file type** — mirrors the backend's
-   package structure.
-2. **Keep `components/` and `lib/` strictly for cross-feature shared code**;
-   feature-specific code stays inside its `features/<name>/` folder.
-3. **Never implement move-legality or exercise-correctness logic in the
-   frontend as the final authority** — always defer to the backend API for
-   validation.
-4. **All new dependencies must be checked for license compatibility**
-   (MIT/BSD/ISC preferred, avoid GPL/AGPL) before being added, given the
-   commercial intent.
+## Components
+
+- Functional components with hooks — no class components
+- One component = one file, private sub-components can stay in the same file
+- Props typed with `interface`, exported if the component is public
+- No business logic inside components — extract to hooks
+
+## State management
+
+Two categories of state:
+
+| Category | Purpose | Example |
+|----------|---------|---------|
+| **Server state** | Data owned by the backend | fetched exercises, user profile |
+| **Client state** | Ephemeral UI-only state | current position, dark mode, form drafts |
+
+- Server state should be managed by a data-fetching library with caching and
+  invalidation (e.g. TanStack Query, SWR)
+- Client state should be managed by a lightweight store (e.g. Zustand, Jotai)
+  or React context
+- Never mix server state into a client-state store
 
 ## API access
 
-- API calls only through `api/` modules (per-feature under
-  `features/<name>/api/`, or a shared `api/` folder) using the shared client.
-- No raw HTTP calls in components or stores.
-- Parse and validate backend DTOs with Zod at the API boundary.
+- Centralize API configuration (base URL, headers, auth) in a shared client
+- Each feature has its own API module that uses the shared client
+- Validate responses at the API boundary (e.g. Zod) so the rest of the app
+  trusts the shape
+- No raw HTTP calls in components, stores, or hooks outside the API layer
+
+## Styling
+
+- Consistent approach across the project — one system (CSS modules, Tailwind,
+  token-based CSS, etc.)
+- Token-based theming (dark/light) via CSS variables or utility classes
+- Respect `prefers-reduced-motion` — disable animations when the user requests it
+- Accessibility: semantic HTML, ARIA roles, keyboard navigation, AA color
+  contrast minimum
+
+## TypeScript
+
+- Strict mode — no `any` except justified exceptions
+- Prefer `interface` for public types, `type` for unions and utilities
+- Derive types from data shapes when possible (e.g. Zod inference from backend
+  DTOs)
 
 ## Testing
 
-- Use Vitest + React Testing Library.
-- Prefer testing hooks and store logic independently of rendering where
-  possible; keep business logic decoupled from components.
+- Vitest + React Testing Library (or equivalent)
+- Test behavior, not implementation — what the user sees and does
+- Prefer testing hooks and business logic independently of rendering
+- No snapshot tests, no style-only tests

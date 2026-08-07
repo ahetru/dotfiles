@@ -68,8 +68,8 @@ A large change delivered in one go is a failure of process, not a fast win.
 
 ## Cross-agent ticketing
 
-InnerChess uses a file-based ticket system between agents (frontend, backend,
-infra) at `~/projects/agents/innerchess/tickets/`.
+Process (when the project uses a file-based ticket system — check the project's
+local `.opencode/AGENTS.md` for the ticket directory path):
 
 - At the start of a session, check the tickets assigned to you (frontmatter
   `to: <your role>`) and take them up before starting new tasks.

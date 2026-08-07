@@ -37,7 +37,7 @@ high-value items over exhaustive lists.
 /home/ahetru/projects/understand-the-code/<project-name>/
 ```
 
-- `project-name` is the current working directory name (e.g. `innerchess`).
+- `project-name` is the current working directory name (e.g. `my-project`).
 - Create the directory if it does not exist.
 - One file per session, named `YYYY-MM-DD_HH-MM_learning-gaps.txt`.
 
