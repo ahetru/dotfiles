@@ -3,7 +3,7 @@
     "position": "top",
     "height": 28,
     "spacing": 4,
-    "output": "*",
+    "output": ["eDP-1"],
     "modules-left": [
         "sway/workspaces",
         "sway/mode"
